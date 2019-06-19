@@ -5,15 +5,16 @@ describe 'call_next' do
     context 'with params' do
       it 'calls the next implementation' do
         saludador_normal = Prototyped::Object.new
-        saludador_normal.saludar = proc { |nombre| "Hola #{nombre}. " }
+        saludador_normal.saludar = proc { |nombre| "Hola #{nombre}." }
+        expect(saludador_normal.saludar('Erlang')).to eq('Hola Erlang.')
 
         saludador_extra = Prototyped::Object.new.set_prototype(saludador_normal)
-        saludador_extra.saludar = proc { |nombre| call_next(:saludar, nombre) + 'Como te va? ' }
-        expect(saludador_extra.saludar('Ruby')).to eq('Hola Ruby. Como te va? ')
+        saludador_extra.saludar = proc { |nombre| call_next(:saludar, nombre) + ' Como te va?' }
+        expect(saludador_extra.saludar('Ruby')).to eq('Hola Ruby. Como te va?')
 
         saludador_loco = Prototyped::Object.new.set_prototype(saludador_extra)
-        saludador_loco.saludar = proc { |nombre| call_next(:saludar, nombre) + 'Que agradable sujeto. ' }
-        expect(saludador_loco.saludar('Matz')).to eq('Hola Matz. Como te va? Que agradable sujeto. ')
+        saludador_loco.saludar = proc { |nombre| call_next(:saludar, nombre) + ' Que agradable sujeto.' }
+        expect(saludador_loco.saludar('Matz')).to eq('Hola Matz. Como te va? Que agradable sujeto.')
       end
 
 
@@ -84,3 +85,4 @@ describe 'call_next' do
     end
   end
 end
+
