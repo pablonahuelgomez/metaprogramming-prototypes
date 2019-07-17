@@ -2,11 +2,10 @@ require_relative 'spec_helper'
 
 describe 'Prototyped Constructors' do
   let(:guerrero) do
-    Prototyped::Object.new
-                      .set_property(:nombre, 'Guerrero')
-                      .set_property(:energia, 100)
-                      .set_property(:potencial_defensivo, 10)
-                      .set_property(:potencial_ofensivo, 30)
+    prototyped.set_property(:nombre, 'Guerrero')
+             .set_property(:energia, 100)
+             .set_property(:potencial_defensivo, 10)
+             .set_property(:potencial_ofensivo, 30)
   end
 
   let(:constructor) do

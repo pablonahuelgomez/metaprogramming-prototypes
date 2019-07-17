@@ -1,4 +1,9 @@
-# TODO: Agregar documentacion
+module Kernel
+  def prototyped(&block)
+    Prototyped::Object.new(&block)
+  end
+end
+
 module Prototyped
   class Object
     def self.new(&block)
