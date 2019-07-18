@@ -14,58 +14,74 @@ module Prototyped
     end
   end
 
-  class Constructor
-    class << self
-      def copy(a_prototype)
-        Class.new do
-          include Prototyped
+  class CopyLogic
+    def self.exec(p)
+      Class.new do
+        include Prototyped
 
-          define_method(:_prototype) { a_prototype.clone }
+        define_method(:_prototype) { p.clone }
 
-          def initialize(args = {})
-            copy_prototype!(_prototype)
-            args.map { |selector, value| send(:"#{selector}=", value) }
+        def initialize(args = {})
+          copy_prototype!(_prototype)
+          args.map { |selector, value| send(:"#{selector}=", value) }
+        end
+      end
+    end
+  end
+
+  class ExtendWithLogic
+    def self.exec(&block)
+      Class.new do
+        include Prototyped
+        define_method(:block) { block }
+
+        def initialize(args = {})
+          block.call(self)
+          process_input(args)
+        end
+
+        private
+
+        def process_input(args)
+          args.map do |selector, value|
+            if methods.include?(selector)
+              instance_variable_set(:"@#{selector}", value)
+            else
+              set_property!(selector, value)
+            end
           end
         end
-      end # copy
+      end
+    end
+  end
 
-      def from(a_prototype)
-        Class.new do
-          include Prototyped
+  class FromLogic
+    def self.exec(p)
+      Class.new do
+        include Prototyped
+        define_method(:_prototype) { p.clone }
 
-          define_method(:_prototype) { a_prototype.clone }
+        def initialize(args = {})
+          set_prototype!(_prototype)
+          args.map { |selector, value| send(:"#{selector}=", value) }
+        end
 
-          def initialize(args = {})
-            set_prototype!(_prototype)
-            args.map { |selector, value| send(:"#{selector}=", value) }
-          end
+        def self.extend_with(&block)
+          ExtendWithLogic.exec(&block)
+        end
+      end
+    end
+  end
 
-          def self.extend_with(&block)
-            Class.new do
-              include Prototyped
+  class Constructor
+    class << self
+      def copy(prototype)
+        CopyLogic.exec(prototype)
+      end
 
-              define_method(:block) { block }
-
-              def initialize(args = {})
-                block.call(self)
-                process_input(args)
-              end
-
-              private
-
-              def process_input(args)
-                args.map do |selector, value|
-                  if methods.include?(selector)
-                    instance_variable_set(:"@#{selector}", value)
-                  else
-                    set_property!(selector, value)
-                  end
-                end
-              end
-            end # Class.new
-          end # self.extend_with
-        end # Class.new
-      end # from
+      def from(prototype)
+        FromLogic.exec(prototype)
+      end
     end
   end
 
@@ -178,17 +194,18 @@ module Prototyped
     end
   end
 
-
   def method_lookup(selector, *args, &block)
-    parent = if prototype.respond_to?(selector)
-               prototype
-             elsif hierarchy_responds_to?(selector)
-               implementors(selector).last
-             else
-               raise NoMethodError, "#The prototype doesn't know how to handle ##{selector}"
-             end
+    identify_parent(selector).send(selector, *args, &block)
+  end
 
-    parent.send(selector, *args, &block)
+  def identify_parent(selector)
+    if prototype.respond_to?(selector)
+      prototype
+    elsif hierarchy_responds_to?(selector)
+      implementors(selector).last
+    else
+      raise NoMethodError, "#The prototype can't handle ##{selector}"
+    end
   end
 
   def hierarchy_responds_to?(selector)
@@ -212,8 +229,12 @@ module Prototyped
     receiver.singleton_class.attr_accessor selector
   end
 
-  def create_method_or_property!(selector, x)
-    x.is_a?(Proc) ? set_method!(selector, &x) : set_property!(selector, x)
+  def create_method_or_property!(selector, proc_or_value)
+    if proc_or_value.is_a?(Proc)
+      set_method!(selector, &proc_or_value)
+    else
+      set_property!(selector, proc_or_value)
+    end
   end
 
   def set_instance_variables_from(prototype)

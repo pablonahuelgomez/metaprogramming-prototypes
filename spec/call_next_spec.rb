@@ -79,7 +79,7 @@ describe 'call_next' do
       expect { proto.metodo }.to(
         raise_error(
           NoMethodError,
-          "#The prototype doesn't know how to handle #metodo"
+          "#The prototype can't handle #metodo"
         )
       )
     end

@@ -88,12 +88,10 @@ describe 'Syntactic sugar' do
           context.saludar   = ->(nombre) do
             "hola #{nombre}, mi nombre es #{context.nombre}"
           end
-          context.envejecer = -> () do
-            context.edad = context.edad + 1
-          end
+          context.envejecer = -> { context.edad = context.edad + 1 }
         }
 
-        expect(perro.nombre).to eq('Ed')
+        expect(perro.nombre).to eq('el lobo gris')
         expect(perro.edad).to eq(42)
         expect(perro.saludar('querido amigo')).to eq('hola querido amigo, mi nombre es el lobo gris')
 
