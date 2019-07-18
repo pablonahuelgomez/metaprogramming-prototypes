@@ -7,9 +7,9 @@ end
 module Prototyped
   class Object
     def self.new(&block)
-      anonymous_class = Class.new
-      anonymous_class.new.extend(Prototyped).tap do |o|
-        o.instance_exec(&block) unless block.nil?
+      anonymous = Class.new.new
+      anonymous.extend(Prototyped).tap do |object|
+        object.instance_exec(&block) unless block.nil?
       end
     end
   end
@@ -22,7 +22,7 @@ module Prototyped
         define_method(:_prototype) { p.clone }
 
         def initialize(args = {})
-          copy_prototype!(_prototype)
+          copy!(_prototype)
           args.map { |selector, value| send(:"#{selector}=", value) }
         end
       end
@@ -43,12 +43,14 @@ module Prototyped
         private
 
         def process_input(args)
-          args.map do |selector, value|
-            if methods.include?(selector)
-              instance_variable_set(:"@#{selector}", value)
-            else
-              set_property!(selector, value)
-            end
+          args.map(&method(:choose))
+        end
+
+        def choose(selector, value)
+          if methods.include?(selector)
+            instance_variable_set(:"@#{selector}", value)
+          else
+            set_property!(selector, value)
           end
         end
       end
@@ -62,7 +64,7 @@ module Prototyped
         define_method(:_prototype) { p.clone }
 
         def initialize(args = {})
-          set_prototype!(_prototype)
+          set!(_prototype)
           args.map { |selector, value| send(:"#{selector}=", value) }
         end
 
@@ -130,7 +132,7 @@ module Prototyped
     tap { define_singleton_method(selector, &block) }
   end
 
-  def set_prototype(a_prototype)
+  def set(a_prototype)
     clone.tap do |o|
       a_prototype.instance_variables.map do |inst_var_selector|
         o.instance_variable_set(
@@ -142,7 +144,7 @@ module Prototyped
     end
   end
 
-  def set_prototype!(a_prototype)
+  def set!(a_prototype)
     tap do
       prototype.instance_variables.map do |inst_var_selector|
         instance_variable_set(
@@ -154,7 +156,7 @@ module Prototyped
     end
   end
 
-  def copy_prototype!(prototype)
+  def copy!(prototype)
     define_singleton_methods_from(prototype)
     set_instance_variables_from(prototype)
   end
@@ -162,6 +164,14 @@ module Prototyped
   def context
     @context || self
   end
+
+  def with_context(a_prototype)
+    tap { @context = a_prototype }
+  end
+
+  private
+
+  attr_reader :prototypes_hierarchy
 
   def method_missing(selector, *args, &block)
     received_method = selector.to_s
@@ -177,14 +187,6 @@ module Prototyped
       handle_method_missing(args, block, selector)
     end
   end
-
-  def with_context(a_prototype)
-    tap { @context = a_prototype }
-  end
-
-  private
-
-  attr_reader :prototypes_hierarchy
 
   def handle_method_missing(args, block, selector)
     if prototype.nil?

@@ -7,7 +7,7 @@ describe 'Programmatic Prototype' do
     context 'modifying self' do
       it 'can set a base prototype' do
         otro_guerrero = guerrero.clone
-        espadachin.set_prototype!(guerrero)
+        espadachin.set!(guerrero)
         guerrero.set_method!(:sanar) { context.energia += 10 }
 
         espadachin.sanar
@@ -23,7 +23,7 @@ describe 'Programmatic Prototype' do
     context 'not modifying self' do
       it 'can set a base prototype' do
         otro_guerrero   = guerrero.clone
-        otro_espadachin = espadachin.set_prototype(guerrero)
+        otro_espadachin = espadachin.set(guerrero)
         otro_espadachin.atacar_a(otro_guerrero)
         expect(otro_guerrero.energia).to eq(65.0)
       end
