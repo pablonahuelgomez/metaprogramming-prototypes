@@ -92,7 +92,7 @@ module Prototyped
   def set_prototypes(*prototypes)
     clone.tap do |o|
       o.instance_variable_set('@prototype', prototypes.last)
-      o.instance_variable_set('@prototypes_hierarchy', prototypes.concat(prototypes.drop(1)))
+      o.instance_variable_set('@hierarchy', prototypes.concat(prototypes.drop(1)))
     end
   end
 
@@ -171,7 +171,7 @@ module Prototyped
 
   private
 
-  attr_reader :prototypes_hierarchy
+  attr_reader :hierarchy
 
   def method_missing(selector, *args, &block)
     received_method = selector.to_s
@@ -215,10 +215,10 @@ module Prototyped
   end
 
   def implementors(selector)
-    if prototypes_hierarchy.nil?
+    if hierarchy.nil?
       []
     else
-      prototypes_hierarchy.select { |prototype| prototype.respond_to?(selector) }
+      hierarchy.select { |prototype| prototype.respond_to?(selector) }
     end
   end
 
