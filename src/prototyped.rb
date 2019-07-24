@@ -15,11 +15,11 @@ module Prototyped
   end
 
   class CopyLogic
-    def self.exec(p)
+    def self.exec(proto)
       Class.new do
         include Prototyped
 
-        define_method(:_prototype) { p.clone }
+        define_method(:_prototype) { proto.clone }
 
         def initialize(args = {})
           copy!(_prototype)
@@ -58,10 +58,10 @@ module Prototyped
   end
 
   class FromLogic
-    def self.exec(p)
+    def self.exec(proto)
       Class.new do
         include Prototyped
-        define_method(:_prototype) { p.clone }
+        define_method(:_prototype) { proto.clone }
 
         def initialize(args = {})
           set!(_prototype)
