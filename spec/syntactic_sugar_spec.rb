@@ -19,13 +19,13 @@ describe 'Syntactic sugar' do
     context 'direct assignment' do
       it 'can set methods' do
         guerrero_proto.atacar_a = ->(otro_guerrero) do
-          if otro_guerrero.potencial_defensivo < self.potencial_ofensivo
+          if otro_guerrero.potencial_defensivo < potencial_ofensivo
             otro_guerrero.recibe_danio(
-              self.potencial_ofensivo - otro_guerrero.potencial_defensivo
+              potencial_ofensivo - otro_guerrero.potencial_defensivo
             )
           end
         end
-        guerrero_proto.recibe_danio = ->(danio) { self.energia = self.energia - danio }
+        guerrero_proto.recibe_danio = ->(danio) { self.energia = energia - danio }
         guerrero_proto.otro_metodo  = -> { 42 }
 
         GuerreroConSelf = Prototyped::Constructor.copy(guerrero_proto)
@@ -40,12 +40,12 @@ describe 'Syntactic sugar' do
 
     context 'indirect assignment through a block' do
       it 'can set methods and properties' do
-        perro = prototyped {
+        perro = prototyped do
           context.nombre    = 'Ed'
           context.edad      = 42
           context.saludar   = ->(nombre) { "hola #{nombre}, mi nombre es #{self.nombre}" }
-          context.envejecer = -> { self.edad = self.edad + 1 }
-        }
+          context.envejecer = -> { self.edad = edad + 1 }
+        end
 
         expect(perro.nombre).to eq('Ed')
         expect(perro.edad).to eq(42)
@@ -82,14 +82,14 @@ describe 'Syntactic sugar' do
 
     context 'indirect assignment through a block' do
       it 'can set methods and properties' do
-        perro = prototyped {
+        perro = prototyped do
           context.nombre    = 'el lobo gris'
           context.edad      = 42
           context.saludar   = ->(nombre) do
             "hola #{nombre}, mi nombre es #{context.nombre}"
           end
           context.envejecer = -> { context.edad = context.edad + 1 }
-        }
+        end
 
         expect(perro.nombre).to eq('el lobo gris')
         expect(perro.edad).to eq(42)

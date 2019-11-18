@@ -17,12 +17,11 @@ describe 'call_next' do
         expect(saludador_loco.saludar('Matz')).to eq('Hola Matz. Como te va? Que agradable sujeto.')
       end
 
-
       it 'delegates any given method to its prototype' do
-        libro = prototyped {
+        libro = prototyped do
           context.titulo = 'El naufrago'
           context.autor  = 'Cesar Aira'
-        }
+        end
 
         proto = prototyped
         proto.leer   = ->(l) { "leyendo #{l.titulo}, de #{l.autor}" }
@@ -85,4 +84,3 @@ describe 'call_next' do
     end
   end
 end
-

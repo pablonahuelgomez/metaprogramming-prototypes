@@ -78,11 +78,11 @@ describe 'Programmatic Prototype' do
   context 'using #context' do
     let(:guerrero) do
       prototyped.set_property(:nombre, 'Guerrero')
-               .set_property(:energia, 100)
-               .set_property(:potencial_defensivo, 10)
-               .set_property(:potencial_ofensivo, 30)
-               .set_method(:recibe_danio) { |danio| context.energia -= danio }
-               .set_method(:atacar_a) do |otro_guerrero|
+                .set_property(:energia, 100)
+                .set_property(:potencial_defensivo, 10)
+                .set_property(:potencial_ofensivo, 30)
+                .set_method(:recibe_danio) { |danio| context.energia -= danio }
+                .set_method(:atacar_a) do |otro_guerrero|
         if otro_guerrero.potencial_defensivo < context.potencial_ofensivo
           otro_guerrero.recibe_danio(
             context.potencial_ofensivo - otro_guerrero.potencial_defensivo
@@ -92,10 +92,10 @@ describe 'Programmatic Prototype' do
     end
     let(:espadachin) do
       prototyped.set_property(:nombre, 'Espadachin')
-               .set_property(:habilidad, 0.5)
-               .set_property(:potencial_espada, 30)
-               .set_property(:potencial_ofensivo, 30)
-               .set_method(:potencial_ofensivo) do
+                .set_property(:habilidad, 0.5)
+                .set_property(:potencial_espada, 30)
+                .set_property(:potencial_ofensivo, 30)
+                .set_method(:potencial_ofensivo) do
         @potencial_ofensivo + (context.potencial_espada * context.habilidad)
       end
     end
@@ -107,24 +107,24 @@ describe 'Programmatic Prototype' do
   context 'using self' do
     let(:guerrero) do
       prototyped.set_property(:nombre, 'Guerrero')
-               .set_property(:energia, 100)
-               .set_property(:potencial_defensivo, 10)
-               .set_property(:potencial_ofensivo, 30)
-               .set_method(:recibe_danio) { |danio| context.energia -= danio }
-               .set_method(:atacar_a) do |otro_guerrero|
-        if otro_guerrero.potencial_defensivo < self.potencial_ofensivo
+                .set_property(:energia, 100)
+                .set_property(:potencial_defensivo, 10)
+                .set_property(:potencial_ofensivo, 30)
+                .set_method(:recibe_danio) { |danio| context.energia -= danio }
+                .set_method(:atacar_a) do |otro_guerrero|
+        if otro_guerrero.potencial_defensivo < potencial_ofensivo
           otro_guerrero.recibe_danio(
-            self.potencial_ofensivo - otro_guerrero.potencial_defensivo
+            potencial_ofensivo - otro_guerrero.potencial_defensivo
           )
         end
       end
     end
     let(:espadachin) do
       prototyped.set_property(:nombre, 'Espadachin')
-               .set_property(:habilidad, 0.5)
-               .set_property(:potencial_espada, 30)
-               .set_method(:potencial_ofensivo) do
-        @potencial_ofensivo + (self.potencial_espada * self.habilidad)
+                .set_property(:habilidad, 0.5)
+                .set_property(:potencial_espada, 30)
+                .set_method(:potencial_ofensivo) do
+        @potencial_ofensivo + (potencial_espada * habilidad)
       end
     end
 

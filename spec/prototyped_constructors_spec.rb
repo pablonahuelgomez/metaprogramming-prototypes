@@ -3,9 +3,9 @@ require_relative 'spec_helper'
 describe 'Prototyped Constructors' do
   let(:guerrero) do
     prototyped.set_property(:nombre, 'Guerrero')
-             .set_property(:energia, 100)
-             .set_property(:potencial_defensivo, 10)
-             .set_property(:potencial_ofensivo, 30)
+              .set_property(:energia, 100)
+              .set_property(:potencial_defensivo, 10)
+              .set_property(:potencial_ofensivo, 30)
   end
 
   let(:constructor) do
@@ -29,7 +29,7 @@ describe 'Prototyped Constructors' do
       end
 
       it 'can assign values' do
-        un_guerrero.nombre = "Otro"
+        un_guerrero.nombre = 'Otro'
         expect(un_guerrero.nombre).to eq('Otro')
       end
 
@@ -64,7 +64,6 @@ describe 'Prototyped Constructors' do
       end
 
       context 'syntax sugar' do
-
         context 'using #context' do
           it 'makes an extension of the constructor with a given block' do
             EspadachinYContexto = constructor.extend_with do |espadachin|
@@ -72,7 +71,7 @@ describe 'Prototyped Constructors' do
               espadachin.potencial_espada = 0
 
               espadachin.potencial_ofensivo = ->() do
-                @potencial_ofensivo + self.potencial_espada * context.habilidad
+                @potencial_ofensivo + potencial_espada * context.habilidad
               end
             end
 
@@ -96,7 +95,7 @@ describe 'Prototyped Constructors' do
               espadachin.potencial_espada = 0
 
               espadachin.potencial_ofensivo = ->() do
-                @potencial_ofensivo + self.potencial_espada * context.habilidad
+                @potencial_ofensivo + potencial_espada * context.habilidad
               end
             end
 

@@ -176,7 +176,7 @@ module Prototyped
   def method_missing(selector, *args, &block)
     received_method = selector.to_s
 
-    if received_method.match(/=/)
+    if received_method =~ /=/
       clean_selector = received_method.delete('=')
       x = args.first
 
